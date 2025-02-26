@@ -1,5 +1,10 @@
 <template>
   <div class="">
+    <div class="row justify-center q-my-lg">
+      <span class="text-h5 text-weight-bold"
+        >Cereal Production in Nepal By Province (2078/79)</span
+      >
+    </div>
     <div ref="mapTarget" id="map"></div>
     <div id="mapControls" class="info ol-unselectable ol-control">
       <div id="fullScreenControl">
@@ -53,10 +58,29 @@
         </div>
       </div>
     </div>
+    <div id="mapLegend" class="legend ol-unselectable ol-control">
+      <div class="color-scale">
+        <div class="scale-labels">
+          <span>0</span>
+          <span
+            >{{ getMaxValue(cerealProductionData, "cerealProduction") }} metric
+            tons</span
+          >
+        </div>
+        <div class="color-gradient"></div>
+      </div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onBeforeMount, onBeforeUnmount, ref, type Ref } from "vue";
+import {
+  onMounted,
+  onBeforeMount,
+  onBeforeUnmount,
+  ref,
+  type Ref,
+  computed,
+} from "vue";
 import { Map, Overlay, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -74,16 +98,26 @@ import type { Color } from "ol/color";
 import { boundingExtent, type Extent } from "ol/extent";
 import { useQuasar } from "quasar";
 import { createStringXY } from "ol/coordinate";
+import { useGeoJsonStore } from "@/stores/geoJson";
+import { useCollectedDataStore } from "@/stores/collectedData";
+import GeoJSON from "ol/format/GeoJSON";
+import {
+  accordingToDataStyleSetter,
+  getMaxValue,
+} from "@/utils/helper.utils.ts";
 
 const $q = useQuasar();
+const collectedDataStore = useCollectedDataStore();
+const geoJsonStore = useGeoJsonStore();
 
 const mapTarget: Ref<InstanceType<typeof Element> | undefined> = ref(undefined);
 const showMapTypeOption = ref(false);
-const mapTypeOptionValue: Ref<string> = ref("OSM Map");
+const mapTypeOptionValue: Ref<string> = ref("No Base Map");
 const mapTypeRef: Ref<InstanceType<typeof Element> | undefined> =
   ref(undefined);
 
 const mapTypeOptions = [
+  { label: "No Base Map", value: "No Base Map" },
   { label: "OSM Map", value: "OSM Map" },
   { label: "Satellite Map", value: "Satellite Map" },
 ];
@@ -97,11 +131,14 @@ const handleMapTypeSelect = () => {
     .getLayers()
     .getArray()
     .find((x) => x.get("id") == "osm layer") as any;
-  if (mapTypeOptionValue.value == "OSM Map") {
+  if (mapTypeOptionValue.value === "OSM Map") {
     osmLayer.setVisible(true);
     bingLayer.setVisible(false);
-  } else if (mapTypeOptionValue.value == "Satellite Map") {
+  } else if (mapTypeOptionValue.value === "Satellite Map") {
     bingLayer.setVisible(true);
+    osmLayer.setVisible(false);
+  } else {
+    bingLayer.setVisible(false);
     osmLayer.setVisible(false);
   }
 };
@@ -139,9 +176,193 @@ const fullscreenToggle = async () => {
   }, 600);
 };
 
+const countryGeojsonData = computed(() => {
+  return geoJsonStore.CountryGeoJson;
+});
+
+const cerealProductionData = computed(() => {
+  return collectedDataStore.CerealProduction;
+});
+
+const getCerealProductionDataByProvinceId = (id: number) => {
+  return cerealProductionData.value.find(
+    (data: { id: number; state: string; cerealProduction: number }) =>
+      data.id === id
+  );
+};
+const addCerealProdctionPropertiesToFeatures = (
+  features: any[],
+  provinceId: number
+) => {
+  features.forEach((feature) => {
+    const productionData = getCerealProductionDataByProvinceId(provinceId);
+    if (productionData) {
+      feature.setProperties({
+        cerealProduction: productionData.cerealProduction,
+      });
+    }
+  });
+};
+
 let map = new Map();
 
 const InitializeMap = () => {
+  const countrySource = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(countryGeojsonData.value);
+      return feature;
+    })(),
+  });
+  const countryVectorLayer = new VectorLayer({
+    source: countrySource,
+    style: new Style({
+      stroke: new Stroke({
+        color: "black",
+        width: 3,
+      }),
+    }),
+  });
+  countryVectorLayer.set("id", "countryLayer");
+
+  const provice1Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province1GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 1);
+      return feature;
+    })(),
+  });
+  const province1VectorLayer = new VectorLayer({
+    source: provice1Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province1VectorLayer.set("id", "province1Layer");
+
+  const provice2Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province2GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 2);
+      return feature;
+    })(),
+  });
+  const province2VectorLayer = new VectorLayer({
+    source: provice2Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province2VectorLayer.set("id", "province2Layer");
+
+  const provice3Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province3GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 3);
+      return feature;
+    })(),
+  });
+  const province3VectorLayer = new VectorLayer({
+    source: provice3Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province3VectorLayer.set("id", "province3Layer");
+
+  const provice4Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province4GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 4);
+      return feature;
+    })(),
+  });
+  const province4VectorLayer = new VectorLayer({
+    source: provice4Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province4VectorLayer.set("id", "province4Layer");
+
+  const provice5Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province5GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 5);
+      return feature;
+    })(),
+  });
+  const province5VectorLayer = new VectorLayer({
+    source: provice5Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province5VectorLayer.set("id", "province5Layer");
+
+  const provice6Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province6GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 6);
+      return feature;
+    })(),
+  });
+  const province6VectorLayer = new VectorLayer({
+    source: provice6Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+  province6VectorLayer.set("id", "province6Layer");
+
+  const provice7Source = new VectorSource({
+    features: (() => {
+      const feature = new GeoJSON().readFeatures(geoJsonStore.province7GeoJson);
+      addCerealProdctionPropertiesToFeatures(feature, 7);
+      return feature;
+    })(),
+  });
+  const province7VectorLayer = new VectorLayer({
+    source: provice7Source,
+    style: function (feature) {
+      let style = accordingToDataStyleSetter(
+        feature,
+        cerealProductionData.value,
+        "cerealProduction"
+      );
+      return style;
+    },
+  });
+
   const view = new View({
     projection: "EPSG:4326",
     center: [0, 0],
@@ -153,6 +374,7 @@ const InitializeMap = () => {
     source: new OSM(),
   });
   osm.set("id", "osm layer");
+  osm.setVisible(false);
 
   const bing = new TileLayer({
     visible: false,
@@ -163,13 +385,25 @@ const InitializeMap = () => {
     zIndex: -1,
   });
   bing.set("id", "bing layer");
+  bing.setVisible(false);
 
   const mousePositionControl = new MousePosition({
     coordinateFormat: createStringXY(7),
     projection: "EPSG:4326",
   });
 
-  const layers = [osm, bing];
+  const layers = [
+    osm,
+    bing,
+    countryVectorLayer,
+    province1VectorLayer,
+    province2VectorLayer,
+    province3VectorLayer,
+    province4VectorLayer,
+    province5VectorLayer,
+    province6VectorLayer,
+    province7VectorLayer,
+  ];
   map = new Map({
     //     overlays: [overlay],
     controls: defaultControls().extend([mousePositionControl]),
@@ -193,13 +427,45 @@ const InitializeMap = () => {
       element: document.getElementById("mapControls") as HTMLElement,
     })
   );
+  map.addControl(
+    new Control({
+      element: document.getElementById("mapLegend") as HTMLElement,
+    })
+  );
 };
 
 onMounted(() => {
   document.addEventListener("click", closeMaptypeSelect);
 });
 
-onMounted(() => {
+onMounted(async () => {
+  await geoJsonStore.fetchCountryGeoJson(
+    "src/assets/country_geojson/country.geojson"
+  );
+  await geoJsonStore.fetchProvince1GeoJson(
+    "src/assets/province_geojsons/Province-1.geojson"
+  );
+  await geoJsonStore.fetchProvince2GeoJson(
+    "src/assets/province_geojsons/Province-2.geojson"
+  );
+  await geoJsonStore.fetchProvince3GeoJson(
+    "src/assets/province_geojsons/Province-3.geojson"
+  );
+  await geoJsonStore.fetchProvince4GeoJson(
+    "src/assets/province_geojsons/Province-4.geojson"
+  );
+  await geoJsonStore.fetchProvince5GeoJson(
+    "src/assets/province_geojsons/Province-5.geojson"
+  );
+  await geoJsonStore.fetchProvince6GeoJson(
+    "src/assets/province_geojsons/Province-6.geojson"
+  );
+  await geoJsonStore.fetchProvince7GeoJson(
+    "src/assets/province_geojsons/Province-7.geojson"
+  );
+  await collectedDataStore.fetchCerealProduction(
+    "src/assets/labels/cereal_production_year_78_79.csv"
+  );
   InitializeMap();
 });
 
@@ -212,11 +478,35 @@ onBeforeUnmount(() => {
   width: 100%;
   border: 1px solid #dadada;
   border-radius: 3px;
-  height: calc(100vh - 69px);
+  height: calc(100vh - 200px);
+}
+
+:deep(.color-scale) {
+  margin-top: 10px;
+}
+
+:deep(.color-gradient) {
+  padding: 15px;
+  width: 400px;
+  border-radius: 3px;
+  background: linear-gradient(to right, rgb(255, 255, 255), rgb(19, 87, 10));
+  border: 1px solid #ccc;
+}
+
+:deep(.scale-labels) {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 12px;
+  color: black;
 }
 :deep(.info) {
   top: 0.5em;
   right: 1em;
+}
+:deep(.legend) {
+  top: 48em;
+  left: 1em;
 }
 :deep(.infoButton) {
   font-size: large;
