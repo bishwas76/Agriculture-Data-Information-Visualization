@@ -2834,6 +2834,11 @@ vue-demi@^0.14.10:
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.10.tgz#afc78de3d6f9e11bf78c55e8510ee12814522f04"
   integrity sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==
 
+vue-google-charts@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vue-google-charts/-/vue-google-charts-1.1.0.tgz#bcd1e113ff5c305f3d3df7e52c4c778b947dc953"
+  integrity sha512-wGAgAynIIUKmP5eJUFlx69e8gjIDpyqHlVsvFyrnd2tGZk3a6FI83dRhdssxPyOc9y41+2QEfqUV9SsR+n6s5A==
+
 vue-router@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.5.0.tgz#58fc5fe374e10b6018f910328f756c3dae081f14"

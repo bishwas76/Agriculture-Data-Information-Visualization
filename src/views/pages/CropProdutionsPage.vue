@@ -21,7 +21,13 @@
             <div class="text-h6 text-center q-mb-md">
               Cereal Crop Production in Nepal (100% Area Chart)
             </div>
-            <div id="chart_div" class="chart-container"></div>
+            <GChart
+              type="AreaChart"
+              :data="cerealProductionData"
+              :options="areaChartOptions"
+              :settings="{ packages: ['corechart'] }"
+              class="chart-container"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -33,7 +39,13 @@
             <div class="text-h6 text-center q-mb-md">
               Total Cereal Crop Production in Nepal (Stacked Bar Chart)
             </div>
-            <div id="bar_chart_div" class="chart-container"></div>
+            <GChart
+              type="BarChart"
+              :data="cerealProductionData"
+              :options="barChartOptions"
+              :settings="{ packages: ['corechart'] }"
+              class="chart-container"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -45,7 +57,13 @@
             <div class="text-h6 text-center q-mb-md">
               Cereal Production in Nepal (FY 2079/80)
             </div>
-            <div id="treemap_div" class="chart-container"></div>
+            <GChart
+              type="TreeMap"
+              :data="treeMapData"
+              :options="treeMapOptions"
+              :settings="{ packages: ['treemap'] }"
+              class="chart-container"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -54,7 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from "vue";
+import { ref, computed } from "vue";
+import { GChart } from "vue-google-charts";
 import CropCeralProductionMapComponent from "@/components/CropCeralProductionMapComponent.vue";
 import { useQuasar } from "quasar";
 
@@ -76,8 +95,61 @@ const cerealProductionData = [
   ["2022/23", 5486472, 2976490, 310847, 15083, 2098462, 25912],
 ];
 
+const treeMapData = [
+  ["Province/Crop", "Parent", "Total Production (MT)"],
+  ["NEPAL", null, 0],
+  ["KOSHI", "NEPAL", 2571222],
+  ["KOSHI - Paddy", "KOSHI", 1336057],
+  ["KOSHI - Maize", "KOSHI", 972073],
+  ["KOSHI - Wheat", "KOSHI", 147331],
+  ["KOSHI - Millet", "KOSHI", 108375],
+  ["KOSHI - Barley", "KOSHI", 1733],
+  ["KOSHI - Buckwheat", "KOSHI", 5654],
+  ["MADHESH", "NEPAL", 2257468],
+  ["MADHESH - Paddy", "MADHESH", 1388841],
+  ["MADHESH - Maize", "MADHESH", 190816],
+  ["MADHESH - Wheat", "MADHESH", 674382],
+  ["MADHESH - Millet", "MADHESH", 3259],
+  ["MADHESH - Barley", "MADHESH", 171],
+  ["BAGMATI", "NEPAL", 1410282],
+  ["BAGMATI - Paddy", "BAGMATI", 500446],
+  ["BAGMATI - Maize", "BAGMATI", 678365],
+  ["BAGMATI - Wheat", "BAGMATI", 153441],
+  ["BAGMATI - Millet", "BAGMATI", 72228],
+  ["BAGMATI - Barley", "BAGMATI", 2076],
+  ["BAGMATI - Buckwheat", "BAGMATI", 3725],
+  ["GANDAKI", "NEPAL", 942460],
+  ["GANDAKI - Paddy", "GANDAKI", 391121],
+  ["GANDAKI - Maize", "GANDAKI", 387904],
+  ["GANDAKI - Wheat", "GANDAKI", 81124],
+  ["GANDAKI - Millet", "GANDAKI", 79619],
+  ["GANDAKI - Barley", "GANDAKI", 1215],
+  ["GANDAKI - Buckwheat", "GANDAKI", 1477],
+  ["LUMBINI", "NEPAL", 2136751],
+  ["LUMBINI - Paddy", "LUMBINI", 1151313],
+  ["LUMBINI - Maize", "LUMBINI", 433416],
+  ["LUMBINI - Wheat", "LUMBINI", 535020],
+  ["LUMBINI - Millet", "LUMBINI", 12579],
+  ["LUMBINI - Barley", "LUMBINI", 3352],
+  ["LUMBINI - Buckwheat", "LUMBINI", 1072],
+  ["KARNALI", "NEPAL", 529248],
+  ["KARNALI - Paddy", "KARNALI", 129473],
+  ["KARNALI - Maize", "KARNALI", 212459],
+  ["KARNALI - Wheat", "KARNALI", 151598],
+  ["KARNALI - Millet", "KARNALI", 20705],
+  ["KARNALI - Barley", "KARNALI", 11924],
+  ["KARNALI - Buckwheat", "KARNALI", 3088],
+  ["SUDURPASHCHIM", "NEPAL", 1065835],
+  ["SUDURPASHCHIM - Paddy", "SUDURPASHCHIM", 589221],
+  ["SUDURPASHCHIM - Maize", "SUDURPASHCHIM", 101456],
+  ["SUDURPASHCHIM - Wheat", "SUDURPASHCHIM", 355567],
+  ["SUDURPASHCHIM - Millet", "SUDURPASHCHIM", 14082],
+  ["SUDURPASHCHIM - Barley", "SUDURPASHCHIM", 5442],
+  ["SUDURPASHCHIM - Buckwheat", "SUDURPASHCHIM", 68],
+];
+
 // Base chart styles
-const getBaseChartStyles = () => ({
+const baseChartStyles = computed(() => ({
   backgroundColor: $q.dark.isActive ? "#1d1d1d" : "#ffffff",
   titleTextStyle: {
     color: $q.dark.isActive ? "#fff" : "#333",
@@ -96,163 +168,57 @@ const getBaseChartStyles = () => ({
     textStyle: { color: $q.dark.isActive ? "#e0e0e0" : "#666" },
     titleTextStyle: { color: $q.dark.isActive ? "#e0e0e0" : "#666" },
   },
-});
+}));
 
-function drawAreaChart() {
-  const data = google.visualization.arrayToDataTable(cerealProductionData);
-  const options = {
-    ...getBaseChartStyles(),
-    isStacked: "percent",
-    height: 450,
-    hAxis: { title: "Year" },
-    vAxis: { title: "Percentage of Production" },
-    colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#00ACC1"],
-  };
+// Chart Options
+const areaChartOptions = computed(() => ({
+  ...baseChartStyles.value,
+  isStacked: "percent",
+  height: 450,
+  hAxis: {
+    ...baseChartStyles.value.hAxis,
+    title: "Year",
+  },
+  vAxis: {
+    ...baseChartStyles.value.vAxis,
+    title: "Percentage of Production",
+  },
+  colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#00ACC1"],
+}));
 
-  const chart = new google.visualization.AreaChart(
-    document.getElementById("chart_div")
-  );
-  chart.draw(data, options);
-}
+const barChartOptions = computed(() => ({
+  ...baseChartStyles.value,
+  isStacked: true,
+  height: 450,
+  hAxis: {
+    ...baseChartStyles.value.hAxis,
+    title: "Total Production (Mt)",
+  },
+  vAxis: {
+    ...baseChartStyles.value.vAxis,
+    title: "Year",
+  },
+  colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#00ACC1"],
+}));
 
-function drawBarChart() {
-  const data = google.visualization.arrayToDataTable(cerealProductionData);
-  const options = {
-    ...getBaseChartStyles(),
-    isStacked: true,
-    height: 450,
-    hAxis: { title: "Total Production (Mt)" },
-    vAxis: { title: "Year" },
-    colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#00ACC1"],
-  };
-
-  const chart = new google.visualization.BarChart(
-    document.getElementById("bar_chart_div")
-  );
-  chart.draw(data, options);
-}
-
-function drawTreeChart() {
-  var data = google.visualization.arrayToDataTable([
-    ["Province/Crop", "Parent", "Total Production (MT)"],
-    ["NEPAL", null, 0],
-    ["KOSHI", "NEPAL", 2571222],
-    ["KOSHI - Paddy", "KOSHI", 1336057],
-    ["KOSHI - Maize", "KOSHI", 972073],
-    ["KOSHI - Wheat", "KOSHI", 147331],
-    ["KOSHI - Millet", "KOSHI", 108375],
-    ["KOSHI - Barley", "KOSHI", 1733],
-    ["KOSHI - Buckwheat", "KOSHI", 5654],
-    ["MADHESH", "NEPAL", 2257468],
-    ["MADHESH - Paddy", "MADHESH", 1388841],
-    ["MADHESH - Maize", "MADHESH", 190816],
-    ["MADHESH - Wheat", "MADHESH", 674382],
-    ["MADHESH - Millet", "MADHESH", 3259],
-    ["MADHESH - Barley", "MADHESH", 171],
-    ["BAGMATI", "NEPAL", 1410282],
-    ["BAGMATI - Paddy", "BAGMATI", 500446],
-    ["BAGMATI - Maize", "BAGMATI", 678365],
-    ["BAGMATI - Wheat", "BAGMATI", 153441],
-    ["BAGMATI - Millet", "BAGMATI", 72228],
-    ["BAGMATI - Barley", "BAGMATI", 2076],
-    ["BAGMATI - Buckwheat", "BAGMATI", 3725],
-    ["GANDAKI", "NEPAL", 942460],
-    ["GANDAKI - Paddy", "GANDAKI", 391121],
-    ["GANDAKI - Maize", "GANDAKI", 387904],
-    ["GANDAKI - Wheat", "GANDAKI", 81124],
-    ["GANDAKI - Millet", "GANDAKI", 79619],
-    ["GANDAKI - Barley", "GANDAKI", 1215],
-    ["GANDAKI - Buckwheat", "GANDAKI", 1477],
-    ["LUMBINI", "NEPAL", 2136751],
-    ["LUMBINI - Paddy", "LUMBINI", 1151313],
-    ["LUMBINI - Maize", "LUMBINI", 433416],
-    ["LUMBINI - Wheat", "LUMBINI", 535020],
-    ["LUMBINI - Millet", "LUMBINI", 12579],
-    ["LUMBINI - Barley", "LUMBINI", 3352],
-    ["LUMBINI - Buckwheat", "LUMBINI", 1072],
-    ["KARNALI", "NEPAL", 529248],
-    ["KARNALI - Paddy", "KARNALI", 129473],
-    ["KARNALI - Maize", "KARNALI", 212459],
-    ["KARNALI - Wheat", "KARNALI", 151598],
-    ["KARNALI - Millet", "KARNALI", 20705],
-    ["KARNALI - Barley", "KARNALI", 11924],
-    ["KARNALI - Buckwheat", "KARNALI", 3088],
-    ["SUDURPASHCHIM", "NEPAL", 1065835],
-    ["SUDURPASHCHIM - Paddy", "SUDURPASHCHIM", 589221],
-    ["SUDURPASHCHIM - Maize", "SUDURPASHCHIM", 101456],
-    ["SUDURPASHCHIM - Wheat", "SUDURPASHCHIM", 355567],
-    ["SUDURPASHCHIM - Millet", "SUDURPASHCHIM", 14082],
-    ["SUDURPASHCHIM - Barley", "SUDURPASHCHIM", 5442],
-    ["SUDURPASHCHIM - Buckwheat", "SUDURPASHCHIM", 68],
-  ]);
-
-  var tree = new google.visualization.TreeMap(
-    document.getElementById("treemap_div")
-  );
-
-  tree.draw(data, {
-    ...getBaseChartStyles(),
-    minColor: "#c8e6c9",
-    midColor: "#66bb6a",
-    maxColor: "#1b5e20",
-    headerHeight: 15,
-    fontColor: $q.dark.isActive ? "#fff" : "black",
-    showScale: true,
-    generateTooltip: showStaticTooltip,
-  });
-
-  function showStaticTooltip(row, size, value) {
-    return (
-      '<div style="background:#fd9; padding:10px; border-style:solid">' +
-      '<span style="font-family:Courier"><b>' +
-      data.getValue(row, 0) +
-      "</b>, " +
-      data.getValue(row, 2) +
-      " MT</span></div>"
-    );
-  }
-}
-
-function drawCharts() {
-  drawAreaChart();
-  drawBarChart();
-  drawTreeChart();
-}
-
-// Simple throttle function
-function throttle(func: Function, limit: number) {
-  let inThrottle: boolean;
-  return function (...args: any[]) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
-
-const handleResize = throttle(() => {
-  drawCharts();
-}, 250);
-
-onMounted(async () => {
-  try {
-    await google.charts.load("current", { packages: ["corechart", "treemap"] });
-    drawCharts();
-    window.addEventListener("resize", handleResize);
-  } catch (error) {
-    console.error("Error initializing charts:", error);
-    $q.notify({
-      type: "negative",
-      message: "Failed to initialize charts",
-      position: "top",
-    });
-  }
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
-});
+const treeMapOptions = computed(() => ({
+  ...baseChartStyles.value,
+  minColor: "#c8e6c9",
+  midColor: "#66bb6a",
+  maxColor: "#1b5e20",
+  headerHeight: 15,
+  fontColor: $q.dark.isActive ? "#fff" : "black",
+  showScale: true,
+  height: 450,
+  generateTooltip: (row: number, size: number, value: number) => {
+    return `
+      <div style="background:#fd9; padding:10px; border-style:solid">
+        <span style="font-family:Courier"><b>${treeMapData[row][0]}</b>, 
+        ${treeMapData[row][2]} MT</span>
+      </div>
+    `;
+  },
+}));
 </script>
 
 <style scoped>

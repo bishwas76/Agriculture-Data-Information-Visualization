@@ -11,11 +11,13 @@
             <div class="text-h6 text-center">
               Milk Production in Nepal (Cow & Buffalo)
             </div>
-            <div
-              id="milk_chart"
-              ref="milkChartRef"
+            <GChart
+              type="AreaChart"
+              :data="chartData.milk"
+              :options="milkChartOptions"
               class="chart-container"
-            ></div>
+              @ready="handleChartReady"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -25,7 +27,13 @@
         <q-card flat bordered class="chart-card">
           <q-card-section>
             <div class="text-h6 text-center">Egg Production in Nepal</div>
-            <div id="egg_chart" ref="eggChartRef" class="chart-container"></div>
+            <GChart
+              type="AreaChart"
+              :data="chartData.egg"
+              :options="eggChartOptions"
+              class="chart-container"
+              @ready="handleChartReady"
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -37,81 +45,52 @@
             <div class="text-h6 text-center">
               Meat Production Over the Years
             </div>
-            <div
-              id="meat_chart_div"
-              ref="meatChartRef"
+            <GChart
+              type="BarChart"
+              :data="chartData.meat"
+              :options="meatChartOptions"
               class="chart-container"
-              style="height: 420px"
-            ></div>
+              @ready="handleChartReady"
+            />
           </q-card-section>
         </q-card>
       </div>
     </div>
 
     <div class="row q-col-gutter-sm q-my-sm">
-      <!-- First GIF Card -->
-      <div class="col-12">
-        <q-card flat bordered class="gif-card">
-          <q-card-section>
-            <div class="gif-container relative-position">
-              <q-img
-                :src="isPlaying1 ? 'src/assets/charts/gif2.gif' : pausedImage1"
-                spinner-color="primary"
-                spinner-size="82px"
-                fit="contain"
-                class="full-height"
-              >
-                <template v-slot:loading>
-                  <q-spinner-dots color="primary" />
-                </template>
-              </q-img>
-              <q-btn
-                :icon="isPlaying1 ? 'pause' : 'play_arrow'"
-                round
-                color="primary"
-                class="absolute-bottom-right q-ma-sm"
-                @click="togglePlay(1)"
-              >
-                <q-tooltip
-                  >{{ isPlaying1 ? "Pause" : "Play" }} Animation</q-tooltip
+      <!-- GIF Cards -->
+      <template v-for="(gif, index) in gifs" :key="index">
+        <div class="col-12">
+          <q-card flat bordered class="gif-card">
+            <q-card-section>
+              <div class="gif-container relative-position">
+                <q-img
+                  :src="gif.isPlaying ? gif.src : gif.pausedImage"
+                  spinner-color="primary"
+                  spinner-size="82px"
+                  fit="contain"
+                  class="full-height"
                 >
-              </q-btn>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-
-      <!-- Second GIF Card -->
-      <div class="col-12">
-        <q-card flat bordered class="gif-card">
-          <q-card-section>
-            <div class="gif-container relative-position">
-              <q-img
-                :src="isPlaying2 ? 'src/assets/charts/gif1.gif' : pausedImage2"
-                spinner-color="primary"
-                spinner-size="82px"
-                fit="contain"
-                class="full-height"
-              >
-                <template v-slot:loading>
-                  <q-spinner-dots color="primary" />
-                </template>
-              </q-img>
-              <q-btn
-                :icon="isPlaying2 ? 'pause' : 'play_arrow'"
-                round
-                color="primary"
-                class="absolute-bottom-right q-ma-sm"
-                @click="togglePlay(2)"
-              >
-                <q-tooltip
-                  >{{ isPlaying2 ? "Pause" : "Play" }} Animation</q-tooltip
+                  <template v-slot:loading>
+                    <q-spinner-dots color="primary" />
+                  </template>
+                </q-img>
+                <q-btn
+                  :icon="gif.isPlaying ? 'pause' : 'play_arrow'"
+                  round
+                  color="primary"
+                  class="absolute-bottom-right q-ma-sm"
+                  @click="togglePlay(index + 1)"
                 >
-              </q-btn>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
+                  <q-tooltip
+                    >{{ gif.isPlaying ? "Pause" : "Play" }} Animation</q-tooltip
+                  >
+                </q-btn>
+              </div>
+            </q-card-section>
+          </q-card>
+        </div>
+      </template>
     </div>
 
     <!-- Loading Overlay -->
@@ -122,25 +101,29 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { GChart } from "vue-google-charts";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 const loading = ref(true);
+const chartsLoaded = ref(0);
 
-// Chart references
-const milkChartRef = ref<HTMLElement | null>(null);
-const eggChartRef = ref<HTMLElement | null>(null);
-const meatChartRef = ref<HTMLElement | null>(null);
-
-const isPlaying1 = ref(true);
-const isPlaying2 = ref(true);
-const pausedImage1 = ref("");
-const pausedImage2 = ref("");
-let frameSequence1: string[] = [];
-let frameSequence2: string[] = [];
-let currentFrame1 = 0;
-let currentFrame2 = 0;
+// GIF state management
+const gifs = ref([
+  {
+    src: "src/assets/charts/gif2.gif",
+    pausedImage: "",
+    isPlaying: true,
+    frames: [] as string[],
+  },
+  {
+    src: "src/assets/charts/gif1.gif",
+    pausedImage: "",
+    isPlaying: true,
+    frames: [] as string[],
+  },
+]);
 
 // Chart data
 const chartData = {
@@ -185,8 +168,8 @@ const chartData = {
   ],
 };
 
-// Base chart styles
-const getBaseChartStyles = () => ({
+// Base chart options
+const baseChartOptions = computed(() => ({
   backgroundColor: $q.dark.isActive ? "#1d1d1d" : "#ffffff",
   titleTextStyle: {
     color: $q.dark.isActive ? "#fff" : "#333",
@@ -211,78 +194,43 @@ const getBaseChartStyles = () => ({
     easing: "out",
     startup: true,
   },
-});
+  height: 390,
+}));
 
-function drawCharts() {
-  loading.value = true;
-  try {
-    // Milk Production Chart
-    const milkData = google.visualization.arrayToDataTable(chartData.milk);
-    const milkChart = new google.visualization.AreaChart(milkChartRef.value);
-    milkChart.draw(milkData, {
-      ...getBaseChartStyles(),
-      hAxis: { title: "Year" },
-      vAxis: { title: "Production (Metric Tons)" },
-      isStacked: true,
-      colors: ["#1976D2", "#FF8F00"],
-    });
+// Individual chart options
+const milkChartOptions = computed(() => ({
+  ...baseChartOptions.value,
+  hAxis: { ...baseChartOptions.value.hAxis, title: "Year" },
+  vAxis: { ...baseChartOptions.value.vAxis, title: "Production (Metric Tons)" },
+  isStacked: true,
+  colors: ["#1976D2", "#FF8F00"],
+}));
 
-    // Egg Production Chart
-    const eggData = google.visualization.arrayToDataTable(chartData.egg);
-    const eggChart = new google.visualization.AreaChart(eggChartRef.value);
-    eggChart.draw(eggData, {
-      ...getBaseChartStyles(),
-      hAxis: { title: "Year" },
-      vAxis: { title: "Production (000 Number)" },
-      isStacked: true,
-      colors: ["#FF9800", "#4CAF50"],
-    });
+const eggChartOptions = computed(() => ({
+  ...baseChartOptions.value,
+  hAxis: { ...baseChartOptions.value.hAxis, title: "Year" },
+  vAxis: { ...baseChartOptions.value.vAxis, title: "Production (000 Number)" },
+  isStacked: true,
+  colors: ["#FF9800", "#4CAF50"],
+}));
 
-    // Meat Production Chart
-    const meatData = google.visualization.arrayToDataTable(chartData.meat);
-    const meatChart = new google.visualization.BarChart(meatChartRef.value);
-    meatChart.draw(meatData, {
-      ...getBaseChartStyles(),
-      isStacked: "percent",
-      hAxis: { minValue: 0 },
-      vAxis: { title: "Year" },
-      colors: [
-        "#E53935",
-        "#8E24AA",
-        "#43A047",
-        "#FB8C00",
-        "#1E88E5",
-        "#00ACC1",
-      ],
-    });
-  } catch (error) {
-    console.error("Error drawing charts:", error);
-    $q.notify({
-      type: "negative",
-      message: "Failed to render charts",
-      position: "top",
-    });
-  } finally {
+const meatChartOptions = computed(() => ({
+  ...baseChartOptions.value,
+  isStacked: "percent",
+  hAxis: { ...baseChartOptions.value.hAxis, minValue: 0 },
+  vAxis: { ...baseChartOptions.value.vAxis, title: "Year" },
+  colors: ["#E53935", "#8E24AA", "#43A047", "#FB8C00", "#1E88E5", "#00ACC1"],
+}));
+
+// Handle chart loading
+const handleChartReady = () => {
+  chartsLoaded.value++;
+  if (chartsLoaded.value === 3) {
     loading.value = false;
   }
-}
+};
 
-// Simple throttle function
-function throttle(func: Function, limit: number) {
-  let inThrottle: boolean;
-  return function (...args: any[]) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
-
-const handleResize = throttle(() => {
-  drawCharts();
-}, 250);
-
+// GIF handling functions
 const extractFrames = async (gifUrl: string): Promise<string[]> => {
   return new Promise((resolve) => {
     const frames: string[] = [];
@@ -294,7 +242,6 @@ const extractFrames = async (gifUrl: string): Promise<string[]> => {
 
     function captureFrame(timestamp: number) {
       if (timestamp - lastTimestamp > 50) {
-        // Capture every 50ms
         if (ctx) {
           canvas.width = img.width;
           canvas.height = img.height;
@@ -306,7 +253,6 @@ const extractFrames = async (gifUrl: string): Promise<string[]> => {
       }
 
       if (frameCount < 20) {
-        // Capture up to 20 frames
         requestAnimationFrame(captureFrame);
       } else {
         resolve(frames);
@@ -318,60 +264,29 @@ const extractFrames = async (gifUrl: string): Promise<string[]> => {
   });
 };
 
-const initializeGif = async (gifNum: number) => {
-  const gifUrl =
-    gifNum === 1 ? "src/assets/charts/gif2.gif" : "src/assets/charts/gif1.gif";
-  const frames = await extractFrames(gifUrl);
-
-  if (gifNum === 1) {
-    frameSequence1 = frames;
-    pausedImage1.value = frames[frames.length]; // Set last frame
-  } else {
-    frameSequence2 = frames;
-    pausedImage2.value = frames[frames.length]; // Set last frame
-  }
+const initializeGif = async (index: number) => {
+  const gif = gifs.value[index];
+  const frames = await extractFrames(gif.src);
+  gif.frames = frames;
+  gif.pausedImage = frames[frames.length - 1];
 };
 
-const togglePlay = async (gifNum: number) => {
-  if (gifNum === 1) {
-    isPlaying1.value = !isPlaying1.value;
-    if (!isPlaying1.value) {
-      // When pausing, use the current frame
-      const frames = frameSequence1;
-      if (frames.length > 0) {
-        pausedImage1.value = frames[frames.length - 1];
-      }
-    }
-  } else {
-    isPlaying2.value = !isPlaying2.value;
-    if (!isPlaying2.value) {
-      const frames = frameSequence2;
-      if (frames.length > 0) {
-        pausedImage2.value = frames[frames.length - 1];
-      }
-    }
-  }
+const togglePlay = (gifNum: number) => {
+  const index = gifNum - 1;
+  gifs.value[index].isPlaying = !gifs.value[index].isPlaying;
 };
 
 onMounted(async () => {
   try {
-    await window.google.charts.load("current", { packages: ["corechart"] });
-    drawCharts();
-    window.addEventListener("resize", handleResize);
-    initializeGif(1);
-    initializeGif(2);
+    await Promise.all([initializeGif(0), initializeGif(1)]);
   } catch (error) {
-    console.error("Error initializing charts:", error);
+    console.error("Error initializing GIFs:", error);
     $q.notify({
       type: "negative",
-      message: "Failed to initialize charts",
+      message: "Failed to initialize animations",
       position: "top",
     });
   }
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
 });
 </script>
 

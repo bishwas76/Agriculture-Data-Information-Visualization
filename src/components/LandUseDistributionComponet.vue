@@ -1,16 +1,18 @@
 <template>
-  <div class="">
+  <div>
     <div class="row q-col-gutter-sm">
       <!-- Total Land Chart -->
       <div class="col-12 col-md-6">
         <q-card class="chart-card" flat bordered>
           <q-card-section>
             <div class="text-h6 text-center">Total Land Use per Province</div>
-            <div
-              id="totalLandChart"
-              ref="totalLandChartRef"
+            <GChart
+              type="ColumnChart"
+              :data="chartData.totalLand"
+              :options="totalLandOptions"
+              :settings="{ packages: ['corechart'] }"
               class="chart-container"
-            ></div>
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -22,11 +24,13 @@
             <div class="text-h6 text-center">
               Agricultural Land Use per Province
             </div>
-            <div
-              id="agriculturalChart"
-              ref="agriculturalChartRef"
+            <GChart
+              type="ColumnChart"
+              :data="chartData.agricultural"
+              :options="agriculturalOptions"
+              :settings="{ packages: ['corechart'] }"
               class="chart-container"
-            ></div>
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -36,11 +40,13 @@
         <q-card class="chart-card" flat bordered>
           <q-card-section>
             <div class="text-h6 text-center">Agricultural Land Percentage</div>
-            <div
-              id="percentageChart"
-              ref="percentageChartRef"
+            <GChart
+              type="BarChart"
+              :data="chartData.percentage"
+              :options="percentageOptions"
+              :settings="{ packages: ['corechart'] }"
               class="chart-container"
-            ></div>
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -52,11 +58,13 @@
             <div class="text-h6 text-center">
               Land Use Distribution in Nepal
             </div>
-            <div
-              id="landUseChart"
-              ref="landUseChartRef"
+            <GChart
+              type="PieChart"
+              :data="chartData.landUse"
+              :options="landUseOptions"
+              :settings="{ packages: ['corechart'] }"
               class="chart-container"
-            ></div>
+            />
           </q-card-section>
         </q-card>
       </div>
@@ -68,40 +76,36 @@
             <div class="text-h6 text-center">
               Land Use Distribution by Province
             </div>
-            <div
-              id="land_use_chart"
-              ref="landUseByProvinceRef"
-              class="chart-container"
-              style="height: 450px"
-            ></div>
+            <GChart
+              v-if="landUseByProvinceData"
+              type="ColumnChart"
+              :data="landUseByProvinceData"
+              :options="landUseByProvinceOptions"
+              :settings="{ packages: ['corechart'] }"
+              class="chart-container large"
+            />
           </q-card-section>
         </q-card>
       </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <q-inner-loading :showing="loading" class="bg-opacity">
+    <q-inner-loading :showing="loading">
       <q-spinner-dots size="50px" color="primary" />
     </q-inner-loading>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { GChart } from "vue-google-charts";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 const loading = ref(true);
-
-// Chart references
-const totalLandChartRef = ref<HTMLElement | null>(null);
-const agriculturalChartRef = ref<HTMLElement | null>(null);
-const percentageChartRef = ref<HTMLElement | null>(null);
-const landUseChartRef = ref<HTMLElement | null>(null);
-const landUseByProvinceRef = ref<HTMLElement | null>(null);
+const landUseByProvinceData = ref(null);
 
 // Base chart styles
-const getBaseChartStyles = () => ({
+const baseChartStyles = computed(() => ({
   backgroundColor: $q.dark.isActive ? "#1d1d1d" : "#ffffff",
   titleTextStyle: {
     color: $q.dark.isActive ? "#fff" : "#333",
@@ -128,47 +132,8 @@ const getBaseChartStyles = () => ({
     easing: "out",
     startup: true,
   },
-});
-
-// Chart configurations
-const getChartConfigs = () => ({
-  totalLand: {
-    ...getBaseChartStyles(),
-    title: "Total Land Use per Province",
-    hAxis: { title: "Province" },
-    vAxis: { title: "Land (Square KM)" },
-    bars: "vertical",
-    legend: "none",
-  },
-  agricultural: {
-    ...getBaseChartStyles(),
-    title: "Agricultural Land Use per Province (Ranked)",
-    hAxis: { title: "Province" },
-    vAxis: { title: "Land (Square KM)" },
-    bars: "vertical",
-    legend: "none",
-  },
-  percentage: {
-    ...getBaseChartStyles(),
-    title: "Agricultural Land as Percentage of Total Land",
-    hAxis: { title: "Percentage (%)" },
-    vAxis: { title: "Province" },
-    bars: "horizontal",
-    legend: "none",
-    bar: { groupWidth: "50%" },
-  },
-  landUse: {
-    ...getBaseChartStyles(),
-    title: "Land Use Distribution in Nepal",
-    pieHole: 0.4,
-    legend: {
-      position: "right",
-      textStyle: { color: $q.dark.isActive ? "#e0e0e0" : "#666" },
-    },
-    tooltip: { trigger: "focus" },
-    chartArea: { width: "70%", height: "80%" },
-  },
-});
+  height: 390,
+}));
 
 // Chart data
 const chartData = {
@@ -217,9 +182,50 @@ const chartData = {
   ],
 };
 
-// Add configuration for Land Use by Province
-const getLandUseByProvinceOptions = () => ({
-  ...getBaseChartStyles(),
+// Chart options
+const totalLandOptions = computed(() => ({
+  ...baseChartStyles.value,
+  title: "Total Land Use per Province",
+  hAxis: { ...baseChartStyles.value.hAxis, title: "Province" },
+  vAxis: { ...baseChartStyles.value.vAxis, title: "Land (Square KM)" },
+  bars: "vertical",
+  legend: "none",
+}));
+
+const agriculturalOptions = computed(() => ({
+  ...baseChartStyles.value,
+  title: "Agricultural Land Use per Province (Ranked)",
+  hAxis: { ...baseChartStyles.value.hAxis, title: "Province" },
+  vAxis: { ...baseChartStyles.value.vAxis, title: "Land (Square KM)" },
+  bars: "vertical",
+  legend: "none",
+}));
+
+const percentageOptions = computed(() => ({
+  ...baseChartStyles.value,
+  title: "Agricultural Land as Percentage of Total Land",
+  hAxis: { ...baseChartStyles.value.hAxis, title: "Percentage (%)" },
+  vAxis: { ...baseChartStyles.value.vAxis, title: "Province" },
+  bars: "horizontal",
+  legend: "none",
+  bar: { groupWidth: "50%" },
+}));
+
+const landUseOptions = computed(() => ({
+  ...baseChartStyles.value,
+  title: "Land Use Distribution in Nepal",
+  pieHole: 0.4,
+  legend: {
+    position: "right",
+    textStyle: { color: $q.dark.isActive ? "#e0e0e0" : "#666" },
+  },
+  tooltip: { trigger: "focus" },
+  chartArea: { width: "70%", height: "80%" },
+}));
+
+const landUseByProvinceOptions = computed(() => ({
+  ...baseChartStyles.value,
+  height: 450,
   bars: "group",
   isStacked: false,
   chartArea: { width: "80%", height: "70%" },
@@ -229,9 +235,10 @@ const getLandUseByProvinceOptions = () => ({
     textStyle: { color: $q.dark.isActive ? "#e0e0e0" : "#666" },
   },
   colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#0097A7"],
-});
+}));
 
-async function loadLandUseByProvinceData() {
+// Load Land Use by Province data
+const loadLandUseByProvinceData = async () => {
   try {
     const response = await fetch(
       "src/assets/labels/Processed Data(Land Use Distribution By Use).csv"
@@ -248,10 +255,11 @@ async function loadLandUseByProvinceData() {
         provinces[i],
         ...rows.slice(2).map((row) => parseFloat(row[i]) || 0),
       ];
-      landUseData.push(provinceData);
+      landUseData.push(provinceData as any);
     }
 
-    return google.visualization.arrayToDataTable(landUseData);
+    landUseByProvinceData.value = landUseData as any;
+    loading.value = false;
   } catch (error) {
     console.error("Error loading chart data:", error);
     $q.notify({
@@ -259,112 +267,11 @@ async function loadLandUseByProvinceData() {
       message: "Failed to load chart data",
       position: "top",
     });
-    return null;
-  }
-}
-
-const drawCharts = async () => {
-  loading.value = true;
-  try {
-    const configs = getChartConfigs();
-
-    // Draw existing charts
-    const totalLandData = google.visualization.arrayToDataTable(
-      chartData.totalLand
-    );
-    const totalLandChart = new google.visualization.ColumnChart(
-      totalLandChartRef.value
-    );
-    totalLandChart.draw(totalLandData, configs.totalLand);
-
-    const agriculturalData = google.visualization.arrayToDataTable(
-      chartData.agricultural
-    );
-    const agriculturalChart = new google.visualization.ColumnChart(
-      agriculturalChartRef.value
-    );
-    agriculturalChart.draw(agriculturalData, configs.agricultural);
-
-    const percentageData = google.visualization.arrayToDataTable(
-      chartData.percentage
-    );
-    const percentageChart = new google.visualization.BarChart(
-      percentageChartRef.value
-    );
-    percentageChart.draw(percentageData, configs.percentage);
-
-    const landUseData = google.visualization.arrayToDataTable(
-      chartData.landUse
-    );
-    const landUseChart = new google.visualization.PieChart(
-      landUseChartRef.value
-    );
-    landUseChart.draw(landUseData, configs.landUse);
-
-    // Draw Land Use by Province chart
-    const landUseByProvinceData = await loadLandUseByProvinceData();
-    if (landUseByProvinceData && landUseByProvinceRef.value) {
-      const landUseByProvinceChart = new google.visualization.ColumnChart(
-        landUseByProvinceRef.value
-      );
-      landUseByProvinceChart.draw(
-        landUseByProvinceData,
-        getLandUseByProvinceOptions()
-      );
-    }
-  } catch (error) {
-    console.error("Error drawing charts:", error);
-    $q.notify({
-      type: "negative",
-      message: "Failed to render charts",
-      position: "top",
-    });
-  } finally {
-    loading.value = false;
   }
 };
 
-// Simple throttle function
-function throttle(func: Function, limit: number) {
-  let inThrottle: boolean;
-  return function (...args: any[]) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-}
-
-const handleResize = throttle(() => {
-  drawCharts();
-}, 250);
-
-// Watch for theme changes
-watch(
-  () => $q.dark.isActive,
-  () => {
-    drawCharts();
-  }
-);
-
-onMounted(async () => {
-  try {
-    await google.charts.load("current", { packages: ["corechart"] });
-    await drawCharts();
-    window.addEventListener("resize", handleResize);
-  } catch (error) {
-    console.error("Error initializing charts:", error);
-    $q.notify({
-      type: "negative",
-      message: "Failed to initialize charts",
-      position: "top",
-    });
-  }
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
+onMounted(() => {
+  loadLandUseByProvinceData();
 });
 </script>
 
@@ -374,18 +281,20 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 
+.chart-container.large {
+  height: 450px;
+}
+
 .chart-card {
   height: 100%;
 }
 
-/* Responsive adjustments */
 @media (max-width: 600px) {
   .chart-container {
     height: 300px;
   }
-}
-
-.bg-opacity {
-  background: rgba(0, 0, 0, 0.3);
+  .chart-container.large {
+    height: 350px;
+  }
 }
 </style>

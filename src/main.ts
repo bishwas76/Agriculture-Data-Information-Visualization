@@ -6,6 +6,7 @@ import { Quasar, AppFullscreen } from "quasar";
 
 import App from "./App.vue";
 import router from "./router";
+import VueGoogleCharts from "vue-google-charts";
 
 // Import icon libraries
 import "@quasar/extras/material-icons/material-icons.css";
@@ -18,7 +19,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
-
+app.use(VueGoogleCharts);
 app.use(Quasar, {
   plugins: { AppFullscreen },
 });
