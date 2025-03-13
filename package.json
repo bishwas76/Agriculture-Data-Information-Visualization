@@ -13,6 +13,9 @@
   "dependencies": {
     "@quasar/extras": "^1.16.16",
     "@types/geojson": "^7946.0.16",
+    "gif-frames": "^1.0.1",
+    "gif.js": "^0.2.0",
+    "gifuct-js": "^2.1.2",
     "nepal-geojson": "^5.0.0-alpha",
     "ol": "^10.4.0",
     "pinia": "^2.3.1",
