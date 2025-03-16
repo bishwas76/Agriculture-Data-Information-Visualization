@@ -25,7 +25,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import AgricultureGPDComponent from "@/components/AgricultureGPDComponent.vue";
 import NepalGDPComponent from "@/components/NepalGDPComponent.vue";
 </script>
