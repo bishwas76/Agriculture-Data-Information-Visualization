@@ -13,6 +13,12 @@ const router = createRouter({
           component: () => import("@/views/pages/DashboardPage.vue"),
         },
         {
+          path: "/economic-aspects-agriculture",
+          name: "EconomicAspectsOfAgriculture",
+          component: () =>
+            import("@/views/pages/EconomicAspectsOfAgriculturePage.vue"),
+        },
+        {
           path: "/crop-production",
           name: "CropProduction",
           component: () => import("@/views/pages/CropProdutionsPage.vue"),
@@ -21,6 +27,11 @@ const router = createRouter({
           path: "/livestock",
           name: "Livestock",
           component: () => import("@/views/pages/LivestockPage.vue"),
+        },
+        {
+          path: "/seed-and-fertilizers",
+          name: "SeedAndFertilizers",
+          component: () => import("@/views/pages/SeedAndFertilizerPage.vue"),
         },
       ],
     },

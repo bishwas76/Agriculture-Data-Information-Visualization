@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-sm">
-    <div class="row q-col-gutter-md">
+    <div class="row q-col-gutter-sm">
       <!-- Map Component -->
       <div class="col-12 col-md-6">
         <CropCeralProductionMapComponent />

@@ -28,6 +28,23 @@
                     class="q-px-md"
                     clickable
                     v-ripple
+                    :to="{ name: 'EconomicAspectsOfAgriculture' }"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="money" color="green-7" />
+                    </q-item-section>
+                    <q-item-section>
+                      Economic Aspects of Agriculture
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-icon name="chevron_right" size="xs" />
+                    </q-item-section>
+                  </q-item>
+                  <q-separator />
+                  <q-item
+                    class="q-px-md"
+                    clickable
+                    v-ripple
                     :to="{ name: 'CropProduction' }"
                   >
                     <q-item-section avatar>
@@ -39,7 +56,7 @@
                     </q-item-section>
                   </q-item>
 
-                  <q-separator spaced inset />
+                  <q-separator />
 
                   <q-item
                     class="q-px-md"
@@ -51,6 +68,22 @@
                       <q-icon name="pets" color="brown-7" />
                     </q-item-section>
                     <q-item-section>Livestock Data</q-item-section>
+                    <q-item-section side>
+                      <q-icon name="chevron_right" size="xs" />
+                    </q-item-section>
+                  </q-item>
+                  <q-separator />
+
+                  <q-item
+                    class="q-px-md"
+                    clickable
+                    v-ripple
+                    :to="{ name: 'SeedAndFertilizers' }"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="eco" color="brown-7" />
+                    </q-item-section>
+                    <q-item-section>Seed And Fertilizers</q-item-section>
                     <q-item-section side>
                       <q-icon name="chevron_right" size="xs" />
                     </q-item-section>

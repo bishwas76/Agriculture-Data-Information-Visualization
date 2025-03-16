@@ -5,7 +5,9 @@
       <div class="col-12 col-md-6">
         <q-card class="chart-card" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center">Total Land Use per Province</div>
+            <div class="text-h6 text-center">
+              Total Land Use per Province (FY 2079/80)
+            </div>
             <GChart
               type="ColumnChart"
               :data="chartData.totalLand"
@@ -22,7 +24,7 @@
         <q-card class="chart-card" flat bordered>
           <q-card-section>
             <div class="text-h6 text-center">
-              Agricultural Land Use per Province
+              Agricultural Land Use per Province (FY 2079/80)
             </div>
             <GChart
               type="ColumnChart"
@@ -39,7 +41,9 @@
       <div class="col-12 col-md-6">
         <q-card class="chart-card" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center">Agricultural Land Percentage</div>
+            <div class="text-h6 text-center">
+              Agricultural Land Percentage (FY 2079/80)
+            </div>
             <GChart
               type="BarChart"
               :data="chartData.percentage"
@@ -56,7 +60,7 @@
         <q-card class="chart-card" flat bordered>
           <q-card-section>
             <div class="text-h6 text-center">
-              Land Use Distribution in Nepal
+              Land Use Distribution in Nepal (FY 2079/80)
             </div>
             <GChart
               type="PieChart"
@@ -74,7 +78,7 @@
         <q-card class="chart-card" flat bordered>
           <q-card-section>
             <div class="text-h6 text-center">
-              Land Use Distribution by Province
+              Land Use Distribution by Province (FY 2079/80)
             </div>
             <GChart
               v-if="landUseByProvinceData"
