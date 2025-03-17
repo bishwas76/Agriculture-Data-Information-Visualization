@@ -112,13 +112,13 @@ const chartsLoaded = ref(0);
 // GIF state management
 const gifs = ref([
   {
-    src: "src/assets/charts/gif2.gif",
+    src: "/gif2.gif",
     pausedImage: "",
     isPlaying: true,
     frames: [] as string[],
   },
   {
-    src: "src/assets/charts/gif1.gif",
+    src: "/gif1.gif",
     pausedImage: "",
     isPlaying: true,
     frames: [] as string[],

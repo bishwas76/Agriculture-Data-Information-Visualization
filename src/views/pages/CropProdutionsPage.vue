@@ -9,7 +9,7 @@
       <div class="col-12 col-md-6">
         <q-card flat bordered>
           <q-card-section>
-            <q-img src="src/assets/charts/nepal-paddy-hexagons-district.png" />
+            <q-img src="/nepal-paddy-hexagons-district.png" />
           </q-card-section>
         </q-card>
       </div>

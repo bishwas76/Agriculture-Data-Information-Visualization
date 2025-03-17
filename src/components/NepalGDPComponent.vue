@@ -1,29 +1,25 @@
 <template>
-  <div
-    ref="flourishContainer"
-    class="flourish-embed flourish-hierarchy"
-    :data-src="dataSrc"
-    data-height="800px"
-  >
-    <noscript>
-      <img :src="thumbnailSrc" width="100%" alt="hierarchy visualization" />
-    </noscript>
-  </div>
+  <iframe
+    :key="iframeKey"
+    :src="flourishUrl"
+    class="flourish-iframe"
+    frameborder="0"
+    scrolling="no"
+  />
 </template>
 
-<script setup>
-import { onMounted, ref, onBeforeMount } from "vue";
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
 
-const flourishContainer = ref(null);
+const iframeKey = ref(0);
 const dataSrc = "visualisation/22141286";
-const thumbnailSrc = `https://public.flourish.studio/${dataSrc}/thumbnail`;
-
-onBeforeMount(() => {
-  const script = document.createElement("script");
-  script.src = "https://public.flourish.studio/resources/embed.js";
-  script.async = true;
-  document.body.appendChild(script);
-});
+const flourishUrl = `https://flo.uri.sh/${dataSrc}/embed`;
 </script>
 
-<style scoped></style>
+<style>
+.flourish-iframe {
+  width: 100%;
+  height: 830px;
+  border: none;
+}
+</style>

@@ -446,32 +446,16 @@ onMounted(() => {
 });
 
 onMounted(async () => {
-  await geoJsonStore.fetchCountryGeoJson(
-    "src/assets/country_geojson/country.geojson"
-  );
-  await geoJsonStore.fetchProvince1GeoJson(
-    "src/assets/province_geojsons/Province-1.geojson"
-  );
-  await geoJsonStore.fetchProvince2GeoJson(
-    "src/assets/province_geojsons/Province-2.geojson"
-  );
-  await geoJsonStore.fetchProvince3GeoJson(
-    "src/assets/province_geojsons/Province-3.geojson"
-  );
-  await geoJsonStore.fetchProvince4GeoJson(
-    "src/assets/province_geojsons/Province-4.geojson"
-  );
-  await geoJsonStore.fetchProvince5GeoJson(
-    "src/assets/province_geojsons/Province-5.geojson"
-  );
-  await geoJsonStore.fetchProvince6GeoJson(
-    "src/assets/province_geojsons/Province-6.geojson"
-  );
-  await geoJsonStore.fetchProvince7GeoJson(
-    "src/assets/province_geojsons/Province-7.geojson"
-  );
+  await geoJsonStore.fetchCountryGeoJson("/country.geojson");
+  await geoJsonStore.fetchProvince1GeoJson("/Province-1.geojson");
+  await geoJsonStore.fetchProvince2GeoJson("/Province-2.geojson");
+  await geoJsonStore.fetchProvince3GeoJson("/Province-3.geojson");
+  await geoJsonStore.fetchProvince4GeoJson("/Province-4.geojson");
+  await geoJsonStore.fetchProvince5GeoJson("/Province-5.geojson");
+  await geoJsonStore.fetchProvince6GeoJson("/Province-6.geojson");
+  await geoJsonStore.fetchProvince7GeoJson("/Province-7.geojson");
   await collectedDataStore.fetchCerealProduction(
-    "src/assets/labels/cereal_production_year_78_79.csv"
+    "/cereal_production_year_78_79.csv"
   );
   InitializeMap();
 });

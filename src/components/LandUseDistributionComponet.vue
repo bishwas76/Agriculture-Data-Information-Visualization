@@ -245,7 +245,7 @@ const landUseByProvinceOptions = computed(() => ({
 const loadLandUseByProvinceData = async () => {
   try {
     const response = await fetch(
-      "src/assets/labels/Processed Data(Land Use Distribution By Use).csv"
+      "/Processed Data(Land Use Distribution By Use).csv"
     );
     const data = await response.text();
     const rows = data.split("\n").map((row) => row.split(","));
