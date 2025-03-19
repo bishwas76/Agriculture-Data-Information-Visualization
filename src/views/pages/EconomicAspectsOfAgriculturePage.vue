@@ -4,19 +4,19 @@
       <div class="col-12">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center q-mb-md">Nepal GDP Breakdown</div>
-            <NepalGDPComponent />
+            <div class="text-h6 text-center">Nepal GDP Breakdown</div>
+            <FlourishChartComponent dataSrc="visualisation/22141286" />
           </q-card-section>
         </q-card>
       </div>
       <div class="col-12">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center q-mb-md">
+            <div class="text-h6 text-center">
               Contribution of Agricultural Commodities to Agriculture GDP (FY
               2080/81)
             </div>
-            <AgricultureGPDComponent />
+            <FlourishChartComponent dataSrc="visualisation/22135889" />
           </q-card-section>
         </q-card>
       </div>
@@ -25,8 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import AgricultureGPDComponent from "@/components/AgricultureGPDComponent.vue";
-import NepalGDPComponent from "@/components/NepalGDPComponent.vue";
+import FlourishChartComponent from "@/components/FlourishChartComponent.vue";
 </script>
 
 <style scoped></style>

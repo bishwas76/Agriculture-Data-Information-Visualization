@@ -37,6 +37,11 @@ const router = createRouter({
           name: "SeedAndFertilizers",
           component: () => import("@/views/pages/SeedAndFertilizerPage.vue"),
         },
+        {
+          path: "/crop-price",
+          name: "CropPrice",
+          component: () => import("@/views/pages/CropPricePage.vue"),
+        },
       ],
     },
   ],

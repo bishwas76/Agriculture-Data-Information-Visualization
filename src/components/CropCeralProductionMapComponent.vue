@@ -496,9 +496,130 @@ onBeforeUnmount(() => {
   right: 1em;
 }
 :deep(.legend) {
-  top: 35em;
-  left: 1em;
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  padding: 8px;
+  transition: all 0.3s ease;
 }
+
+/* Extra large screens (4K and above) */
+@media screen and (min-width: 2560px) {
+  :deep(.legend) {
+    top: 45em;
+    left: 2em;
+    padding: 12px;
+  }
+}
+
+/* Large desktop screens */
+@media screen and (min-width: 1921px) and (max-width: 2559px) {
+  :deep(.legend) {
+    top: 35em;
+    left: 1.8em;
+    padding: 10px;
+  }
+}
+
+/* Standard desktop screens */
+@media screen and (min-width: 1441px) and (max-width: 1920px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 1.5em;
+  }
+}
+
+/* Smaller desktop and laptop screens */
+@media screen and (min-width: 1201px) and (max-width: 1440px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 1.2em;
+  }
+}
+
+/* Small desktop and large tablet landscape */
+@media screen and (min-width: 1025px) and (max-width: 1200px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 1em;
+  }
+}
+
+/* Tablet landscape */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 1em;
+  }
+}
+
+/* Tablet portrait */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  :deep(.legend) {
+    top: 25em;
+    left: 0.8em;
+    padding: 6px;
+  }
+}
+
+/* Large mobile phones */
+@media screen and (min-width: 481px) and (max-width: 600px) {
+  :deep(.legend) {
+    top: 25em;
+    left: 0.6em;
+    padding: 5px;
+    transform: scale(0.9);
+  }
+}
+
+/* Medium mobile phones */
+@media screen and (min-width: 376px) and (max-width: 480px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 0.5em;
+    padding: 4px;
+    transform: scale(0.85);
+  }
+}
+
+/* Small mobile phones */
+@media screen and (max-width: 375px) {
+  :deep(.legend) {
+    top: 28em;
+    left: 0.4em;
+    padding: 4px;
+    transform: scale(0.8);
+  }
+}
+
+/* Handle orientation changes */
+@media screen and (max-height: 450px) and (orientation: landscape) {
+  :deep(.legend) {
+    top: 15em;
+    left: 0.5em;
+    transform: scale(0.8);
+  }
+}
+
+/* Responsive width adjustments */
+@media screen and (max-width: 1024px) {
+  :deep(.legend .color-gradient) {
+    width: 200px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  :deep(.legend .color-gradient) {
+    width: 150px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  :deep(.legend .color-gradient) {
+    width: 120px;
+  }
+}
+
 :deep(.infoButton) {
   font-size: large;
   border: 0;

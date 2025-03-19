@@ -51,7 +51,7 @@
             <div class="text-h6 text-center q-mb-md">
               Total Sales of Fertilizers (FY 2079/80)
             </div>
-            <FertilizerSalesComponent />
+            <FlourishChartComponent dataSrc="visualisation/22139746" />
           </q-card-section>
         </q-card>
       </div>
@@ -63,8 +63,7 @@
 import { ref, computed, onMounted } from "vue";
 import { GChart } from "vue-google-charts";
 import { useQuasar } from "quasar";
-import FertilizerSalesComponent from "@/components/FertilizerSalesComponent.vue";
-
+import FlourishChartComponent from "@/components/FlourishChartComponent.vue";
 const $q = useQuasar();
 
 const seedProductionStatus = ref([

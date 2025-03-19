@@ -3,10 +3,10 @@
     <q-header reveal bordered class="bg-positive text-white">
       <q-toolbar>
         <q-toolbar-title>
-          <div class="row justify-between q-pa-md">
+          <div class="row justify-between q-pa-sm">
             <router-link :to="{ name: 'Dashboard' }">
               <div class="items-center">
-                <span class="text-h5 text-center">
+                <span class="text-h6 text-center">
                   Agriculture Data Visualization Dashboard
                 </span>
               </div>
@@ -65,7 +65,7 @@
                     :to="{ name: 'Livestock' }"
                   >
                     <q-item-section avatar>
-                      <q-icon name="pets" color="brown-7" />
+                      <q-icon name="pets" color="green-7" />
                     </q-item-section>
                     <q-item-section>Livestock Data</q-item-section>
                     <q-item-section side>
@@ -81,9 +81,25 @@
                     :to="{ name: 'SeedAndFertilizers' }"
                   >
                     <q-item-section avatar>
-                      <q-icon name="eco" color="brown-7" />
+                      <q-icon name="eco" color="green-7" />
                     </q-item-section>
                     <q-item-section>Seed And Fertilizers</q-item-section>
+                    <q-item-section side>
+                      <q-icon name="chevron_right" size="xs" />
+                    </q-item-section>
+                  </q-item>
+                  <q-separator />
+
+                  <q-item
+                    class="q-px-md"
+                    clickable
+                    v-ripple
+                    :to="{ name: 'CropPrice' }"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="attach_money" color="green-7" />
+                    </q-item-section>
+                    <q-item-section>Crop Price</q-item-section>
                     <q-item-section side>
                       <q-icon name="chevron_right" size="xs" />
                     </q-item-section>
@@ -97,7 +113,7 @@
     </q-header>
 
     <q-page-container>
-      <div>
+      <div class="container-div">
         <router-view />
       </div>
     </q-page-container>

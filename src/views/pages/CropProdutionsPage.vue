@@ -2,12 +2,12 @@
   <div class="q-pa-sm">
     <div class="row q-col-gutter-sm">
       <!-- Map Component -->
-      <div class="col-12 col-md-6">
+      <div class="col-12">
         <CropCeralProductionMapComponent />
       </div>
 
-      <div class="col-12 col-md-6">
-        <q-card flat bordered>
+      <div class="col-12">
+        <q-card class="chart-card" flat bordered>
           <q-card-section>
             <q-img src="/nepal-paddy-hexagons-district.png" />
           </q-card-section>
@@ -16,9 +16,9 @@
 
       <!-- Area Chart -->
       <div class="col-12 col-md-6">
-        <q-card flat bordered>
+        <q-card class="chart-card" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center q-mb-md">
+            <div class="text-h6 text-center">
               Cereal Crop Production in Nepal (100% Area Chart)
             </div>
             <GChart
@@ -34,9 +34,9 @@
 
       <!-- Bar Chart -->
       <div class="col-12 col-md-6">
-        <q-card flat bordered>
+        <q-card class="chart-card" flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center q-mb-md">
+            <div class="text-h6 text-center">
               Total Cereal Crop Production in Nepal (Stacked Bar Chart)
             </div>
             <GChart
@@ -223,14 +223,23 @@ const treeMapOptions = computed(() => ({
 
 <style scoped>
 .chart-container {
-  height: 515px;
+  height: 490px;
   width: 100%;
-  position: relative;
 }
 
+.chart-container.large {
+  height: 450px;
+}
 @media (max-width: 600px) {
   .chart-container {
-    height: 400px;
+    height: 300px;
   }
+  .chart-container.large {
+    height: 350px;
+  }
+}
+
+.chart-card {
+  height: 100%;
 }
 </style>
