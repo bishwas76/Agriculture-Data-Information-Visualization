@@ -1,5 +1,15 @@
 <template>
   <div class="q-pa-sm">
+    <div class="q-my-md">
+      <q-breadcrumbs gutter="sm">
+        <q-breadcrumbs-el
+          :to="{ name: 'Dashboard' }"
+          icon="home"
+          label="Dashboard"
+        />
+        <q-breadcrumbs-el icon="eco" label="Crop Production" />
+      </q-breadcrumbs>
+    </div>
     <div class="row q-col-gutter-sm">
       <!-- Map Component -->
       <div class="col-12">

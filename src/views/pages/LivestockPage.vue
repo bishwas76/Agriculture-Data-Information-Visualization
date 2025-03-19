@@ -3,6 +3,16 @@
     <!-- <div class="row justify-center q-my-md">
       <span class="text-h5">Milk, Meat, Egg Production in Nepal</span>
     </div> -->
+    <div class="q-my-md">
+      <q-breadcrumbs gutter="sm">
+        <q-breadcrumbs-el
+          :to="{ name: 'Dashboard' }"
+          icon="home"
+          label="Dashboard"
+        />
+        <q-breadcrumbs-el icon="pets" label="Livestock Data" />
+      </q-breadcrumbs>
+    </div>
     <div class="row q-col-gutter-sm">
       <!-- Milk Production Chart -->
       <div class="col-12 col-md-6">
