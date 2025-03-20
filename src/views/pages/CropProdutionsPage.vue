@@ -59,21 +59,13 @@
           </q-card-section>
         </q-card>
       </div>
-
-      <!-- Tree Map -->
       <div class="col-12">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6 text-center q-mb-md">
+            <div class="text-h6 text-center">
               Cereal Production in Nepal (FY 2079/80)
             </div>
-            <GChart
-              type="TreeMap"
-              :data="treeMapData"
-              :options="treeMapOptions"
-              :settings="{ packages: ['treemap'] }"
-              class="chart-container"
-            />
+            <FlourishChartComponent dataSrc="visualisation/22210792" />
           </q-card-section>
         </q-card>
       </div>
@@ -85,6 +77,7 @@
 import { ref, computed } from "vue";
 import { GChart } from "vue-google-charts";
 import CropCeralProductionMapComponent from "@/components/CropCeralProductionMapComponent.vue";
+import FlourishChartComponent from "@/components/FlourishChartComponent.vue";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
@@ -103,59 +96,6 @@ const cerealProductionData = [
   ["2020/21", 5621710, 2997733, 326443, 15917, 2127276, 29433],
   ["2021/22", 5130625, 3106397, 339462, 19290, 2144568, 32156],
   ["2022/23", 5486472, 2976490, 310847, 15083, 2098462, 25912],
-];
-
-const treeMapData = [
-  ["Province/Crop", "Parent", "Total Production (MT)"],
-  ["NEPAL", null, 0],
-  ["KOSHI", "NEPAL", 2571222],
-  ["KOSHI - Paddy", "KOSHI", 1336057],
-  ["KOSHI - Maize", "KOSHI", 972073],
-  ["KOSHI - Wheat", "KOSHI", 147331],
-  ["KOSHI - Millet", "KOSHI", 108375],
-  ["KOSHI - Barley", "KOSHI", 1733],
-  ["KOSHI - Buckwheat", "KOSHI", 5654],
-  ["MADHESH", "NEPAL", 2257468],
-  ["MADHESH - Paddy", "MADHESH", 1388841],
-  ["MADHESH - Maize", "MADHESH", 190816],
-  ["MADHESH - Wheat", "MADHESH", 674382],
-  ["MADHESH - Millet", "MADHESH", 3259],
-  ["MADHESH - Barley", "MADHESH", 171],
-  ["BAGMATI", "NEPAL", 1410282],
-  ["BAGMATI - Paddy", "BAGMATI", 500446],
-  ["BAGMATI - Maize", "BAGMATI", 678365],
-  ["BAGMATI - Wheat", "BAGMATI", 153441],
-  ["BAGMATI - Millet", "BAGMATI", 72228],
-  ["BAGMATI - Barley", "BAGMATI", 2076],
-  ["BAGMATI - Buckwheat", "BAGMATI", 3725],
-  ["GANDAKI", "NEPAL", 942460],
-  ["GANDAKI - Paddy", "GANDAKI", 391121],
-  ["GANDAKI - Maize", "GANDAKI", 387904],
-  ["GANDAKI - Wheat", "GANDAKI", 81124],
-  ["GANDAKI - Millet", "GANDAKI", 79619],
-  ["GANDAKI - Barley", "GANDAKI", 1215],
-  ["GANDAKI - Buckwheat", "GANDAKI", 1477],
-  ["LUMBINI", "NEPAL", 2136751],
-  ["LUMBINI - Paddy", "LUMBINI", 1151313],
-  ["LUMBINI - Maize", "LUMBINI", 433416],
-  ["LUMBINI - Wheat", "LUMBINI", 535020],
-  ["LUMBINI - Millet", "LUMBINI", 12579],
-  ["LUMBINI - Barley", "LUMBINI", 3352],
-  ["LUMBINI - Buckwheat", "LUMBINI", 1072],
-  ["KARNALI", "NEPAL", 529248],
-  ["KARNALI - Paddy", "KARNALI", 129473],
-  ["KARNALI - Maize", "KARNALI", 212459],
-  ["KARNALI - Wheat", "KARNALI", 151598],
-  ["KARNALI - Millet", "KARNALI", 20705],
-  ["KARNALI - Barley", "KARNALI", 11924],
-  ["KARNALI - Buckwheat", "KARNALI", 3088],
-  ["SUDURPASHCHIM", "NEPAL", 1065835],
-  ["SUDURPASHCHIM - Paddy", "SUDURPASHCHIM", 589221],
-  ["SUDURPASHCHIM - Maize", "SUDURPASHCHIM", 101456],
-  ["SUDURPASHCHIM - Wheat", "SUDURPASHCHIM", 355567],
-  ["SUDURPASHCHIM - Millet", "SUDURPASHCHIM", 14082],
-  ["SUDURPASHCHIM - Barley", "SUDURPASHCHIM", 5442],
-  ["SUDURPASHCHIM - Buckwheat", "SUDURPASHCHIM", 68],
 ];
 
 // Base chart styles
@@ -209,25 +149,6 @@ const barChartOptions = computed(() => ({
     title: "Year",
   },
   colors: ["#1976D2", "#388E3C", "#FFA000", "#D32F2F", "#7B1FA2", "#00ACC1"],
-}));
-
-const treeMapOptions = computed(() => ({
-  ...baseChartStyles.value,
-  minColor: "#c8e6c9",
-  midColor: "#66bb6a",
-  maxColor: "#1b5e20",
-  headerHeight: 15,
-  fontColor: $q.dark.isActive ? "#fff" : "black",
-  showScale: true,
-  height: 450,
-  generateTooltip: (row: number, size: number, value: number) => {
-    return `
-      <div style="background:#fd9; padding:10px; border-style:solid">
-        <span style="font-family:Courier"><b>${treeMapData[row][0]}</b>, 
-        ${treeMapData[row][2]} MT</span>
-      </div>
-    `;
-  },
 }));
 </script>
 
